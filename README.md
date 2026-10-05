@@ -19,24 +19,29 @@ It is a VST3 instrument, tested in Ableton Live 12 on macOS. If you would rather
 
 - AKAI APC mini mk2.
 - A VST3 host. Tested only in Ableton Live 12.0.5 on macOS (Apple Silicon).
-- [Rust](https://rustup.rs), to build the plugin from this repository. There is no ready-made download yet.
+- macOS on Apple Silicon or Intel. Windows has not been tested.
 
 ## Install
 
-1. Download or clone this repository.
-2. In a terminal, from the repository folder, build the plugin:
+1. Download `APC-Seq-0.1.0-macOS-VST3.zip` from the [latest release](https://github.com/om1ji/apc-mini-step-sequencer/releases/latest) and unzip it.
+2. Copy `APC Seq.vst3` to `~/Library/Audio/Plug-Ins/VST3` (in Finder: **Go → Go to Folder…**, paste the path; create the `VST3` folder if it is missing).
+3. The plugin is not notarized by Apple, so macOS blocks it after download. Unblock it once in Terminal:
 
    ```bash
-   cargo xtask bundle apc_seq --release
+   xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/VST3/"APC Seq.vst3"
    ```
 
-   The first build downloads dependencies and takes a few minutes.
-3. Put `target/bundled/APC Seq.vst3` into your VST3 folder. On macOS, a link keeps it up to date after every rebuild:
+### Building from source
 
-   ```bash
-   mkdir -p ~/Library/Audio/Plug-Ins/VST3
-   ln -sfn "$PWD/target/bundled/APC Seq.vst3" ~/Library/Audio/Plug-Ins/VST3/"APC Seq.vst3"
-   ```
+With [Rust](https://rustup.rs) installed, from the repository folder:
+
+```bash
+cargo xtask bundle apc_seq --release
+mkdir -p ~/Library/Audio/Plug-Ins/VST3
+ln -sfn "$PWD/target/bundled/APC Seq.vst3" ~/Library/Audio/Plug-Ins/VST3/"APC Seq.vst3"
+```
+
+The first build downloads dependencies and takes a few minutes. The link keeps the installed plugin up to date after every rebuild.
 
 ## Set up Live
 
@@ -76,6 +81,7 @@ The plugin window is in Russian:
 
 | What you see | What to do |
 | --- | --- |
+| Live does not list APC Seq, or macOS says it cannot be opened | the download is still blocked: run the `xattr` command from [Install](#install), then rescan plug-ins |
 | `Контроллер не найден` in the window | check the USB cable; the plugin looks for a MIDI port named like `APC mini mk2 Control` |
 | Pads flicker or show clip colors | another script is also driving the lights: the APC mini mk2 control surface in Live, or the Max for Live version of APC Seq |
 | Faders do nothing until moved, then the volume jumps | expected: the plugin learns a fader's position from its first move |

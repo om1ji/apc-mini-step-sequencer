@@ -19,24 +19,29 @@
 
 - AKAI APC mini mk2.
 - VST3-хост. Проверено только в Ableton Live 12.0.5 на macOS (Apple Silicon).
-- [Rust](https://rustup.rs), чтобы собрать плагин из этого репозитория. Готовой загрузки пока нет.
+- macOS на Apple Silicon или Intel. На Windows не проверялось.
 
 ## Установка
 
-1. Скачайте или склонируйте этот репозиторий.
-2. В терминале, из папки репозитория, соберите плагин:
+1. Скачайте `APC-Seq-0.1.0-macOS-VST3.zip` из [последнего релиза](https://github.com/om1ji/apc-mini-step-sequencer/releases/latest) и распакуйте.
+2. Скопируйте `APC Seq.vst3` в `~/Library/Audio/Plug-Ins/VST3` (в Finder: **Переход → Переход к папке…**, вставьте путь; если папки `VST3` нет, создайте её).
+3. Плагин не заверен Apple, поэтому macOS блокирует его после скачивания. Один раз снимите блокировку в Терминале:
 
    ```bash
-   cargo xtask bundle apc_seq --release
+   xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/VST3/"APC Seq.vst3"
    ```
 
-   Первая сборка скачивает зависимости и занимает несколько минут.
-3. Положите `target/bundled/APC Seq.vst3` в папку VST3. На macOS удобнее сделать ссылку — тогда после каждой пересборки ничего не нужно копировать:
+### Сборка из исходников
 
-   ```bash
-   mkdir -p ~/Library/Audio/Plug-Ins/VST3
-   ln -sfn "$PWD/target/bundled/APC Seq.vst3" ~/Library/Audio/Plug-Ins/VST3/"APC Seq.vst3"
-   ```
+Если установлен [Rust](https://rustup.rs), из папки репозитория:
+
+```bash
+cargo xtask bundle apc_seq --release
+mkdir -p ~/Library/Audio/Plug-Ins/VST3
+ln -sfn "$PWD/target/bundled/APC Seq.vst3" ~/Library/Audio/Plug-Ins/VST3/"APC Seq.vst3"
+```
+
+Первая сборка скачивает зависимости и занимает несколько минут. Ссылка обновляет установленный плагин после каждой пересборки.
 
 ## Настройка Live
 
@@ -76,6 +81,7 @@
 
 | Что видно | Что делать |
 | --- | --- |
+| Live не видит APC Seq, или macOS пишет, что его нельзя открыть | скачанный файл ещё заблокирован: выполните команду `xattr` из [Установки](#установка) и пересканируйте плагины |
 | В окне `Контроллер не найден` | проверьте USB-кабель; плагин ищет MIDI-порт с именем вроде `APC mini mk2 Control` |
 | Пады мигают или показывают цвета клипов | подсветкой управляет ещё один скрипт: Control Surface APC mini mk2 в Live или версия APC Seq для Max for Live |
 | Фейдеры не действуют до первого движения, потом громкость скачет | так и задумано: положение фейдера плагин узнаёт при первом движении |

@@ -56,6 +56,19 @@ docs/diagrams/          исходник и интерактивная схем�
 
 Плагин открывает порт, в имени которого есть `APC mini mk2`, нет `Notes` и который не начинается с `MIDIIN` или `MIDIOUT`: на macOS это `APC mini mk2 Control`, на Windows — первый из двух портов контроллера.
 
+## Релизная сборка
+
+В релизах лежит universal-бандл (Apple Silicon + Intel), из сообщений паник которого убраны локальные пути, с ad-hoc-подписью:
+
+```bash
+rustup target add x86_64-apple-darwin
+export CARGO_ENCODED_RUSTFLAGS="$(printf -- '--remap-path-prefix=%s=/cargo\x1f--remap-path-prefix=%s=/apc-mini-step-sequencer' "$HOME/.cargo" "$PWD")"
+cargo xtask bundle-universal apc_seq --release
+codesign --force --deep -s - "target/bundled/APC Seq.vst3"
+```
+
+`CARGO_ENCODED_RUSTFLAGS` разделяет флаги символом `\x1f`, а не пробелом, поэтому пути с пробелами не ломаются. Бандл не заверен Apple; пользователи снимают флаг карантина командой `xattr`, как написано в README. В архив релиза также входят текст GPLv3 и лицензия MIT.
+
 ## Тесты
 
 ```bash

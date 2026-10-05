@@ -56,6 +56,19 @@ docs/diagrams/          archify source and interactive diagram
 
 The plugin opens the port whose name contains `APC mini mk2` and neither contains `Notes` nor starts with `MIDIIN` or `MIDIOUT`: on macOS that is `APC mini mk2 Control`, on Windows the first of the controller's two ports.
 
+## Release builds
+
+Releases ship a universal (Apple Silicon + Intel) bundle with source paths stripped from panic messages and an ad-hoc signature:
+
+```bash
+rustup target add x86_64-apple-darwin
+export CARGO_ENCODED_RUSTFLAGS="$(printf -- '--remap-path-prefix=%s=/cargo\x1f--remap-path-prefix=%s=/apc-mini-step-sequencer' "$HOME/.cargo" "$PWD")"
+cargo xtask bundle-universal apc_seq --release
+codesign --force --deep -s - "target/bundled/APC Seq.vst3"
+```
+
+`CARGO_ENCODED_RUSTFLAGS` separates flags with `\x1f` instead of spaces, so paths with spaces survive. The bundle is not notarized; users clear the quarantine flag with `xattr`, as the README explains. The release zip also carries the GPLv3 text and the MIT license.
+
 ## Testing
 
 ```bash
