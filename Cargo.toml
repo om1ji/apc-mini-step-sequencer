@@ -1,0 +1,27 @@
+[workspace]
+members = ["xtask"]
+
+[package]
+name = "apc_seq"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+nih_plug = { git = "https://github.com/robbert-vdh/nih-plug.git" }
+nih_plug_egui = { git = "https://github.com/robbert-vdh/nih-plug.git" }
+midir = "0.10"
+rtrb = "0.3"
+rfd = "0.15"
+pollster = "0.4"
+symphonia = { version = "0.5", features = ["aiff", "mp3"] }
+
+[profile.release]
+lto = "thin"
+strip = "symbols"
+
+# Локальная копия с поддержкой перетаскивания файлов в окно плагина.
+[patch."https://github.com/BillyDM/egui-baseview.git"]
+egui-baseview = { path = "vendor/egui-baseview" }

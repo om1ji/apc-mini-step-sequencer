@@ -1,0 +1,188 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "APC Seq VST3",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "viewBox": [
+      940,
+      540
+    ]
+  },
+  "components": [
+    {
+      "id": "apc",
+      "type": "external",
+      "label": "APC mini mk2",
+      "sublabel": "USB MIDI",
+      "pos": [
+        40,
+        280
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "midiin",
+      "type": "backend",
+      "label": "MIDI input",
+      "sublabel": "midir callback",
+      "pos": [
+        260,
+        280
+      ],
+      "size": [
+        140,
+        60
+      ]
+    },
+    {
+      "id": "audio",
+      "type": "backend",
+      "label": "Audio thread",
+      "sublabel": "sequencer + voices",
+      "pos": [
+        500,
+        280
+      ],
+      "size": [
+        150,
+        60
+      ],
+      "tag": "lock-free"
+    },
+    {
+      "id": "live",
+      "type": "external",
+      "label": "Ableton Live",
+      "sublabel": "VST3 host",
+      "pos": [
+        760,
+        280
+      ],
+      "size": [
+        140,
+        60
+      ]
+    },
+    {
+      "id": "editor",
+      "type": "frontend",
+      "label": "Editor",
+      "sublabel": "egui window",
+      "pos": [
+        260,
+        140
+      ],
+      "size": [
+        150,
+        60
+      ]
+    },
+    {
+      "id": "files",
+      "type": "database",
+      "label": "Sample files",
+      "sublabel": "WAV / AIFF / FLAC / MP3",
+      "pos": [
+        40,
+        140
+      ],
+      "size": [
+        150,
+        60
+      ]
+    },
+    {
+      "id": "bg",
+      "type": "backend",
+      "label": "Background task",
+      "sublabel": "LED output",
+      "pos": [
+        500,
+        420
+      ],
+      "size": [
+        150,
+        60
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "APC Seq.vst3",
+      "wraps": [
+        "midiin",
+        "audio",
+        "editor",
+        "bg"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "controls",
+      "from": "apc",
+      "to": "midiin",
+      "label": "pads, faders",
+      "variant": "emphasis"
+    },
+    {
+      "id": "presses",
+      "from": "midiin",
+      "to": "audio",
+      "label": "rtrb + atomics",
+      "variant": "emphasis"
+    },
+    {
+      "id": "transport",
+      "from": "live",
+      "to": "audio",
+      "label": "tempo, position",
+      "labelDy": 28
+    },
+    {
+      "id": "audioout",
+      "from": "audio",
+      "to": "live",
+      "label": "stereo audio",
+      "variant": "emphasis"
+    },
+    {
+      "id": "samples",
+      "from": "files",
+      "to": "editor",
+      "label": "drag and drop"
+    },
+    {
+      "id": "decoded",
+      "from": "editor",
+      "to": "audio",
+      "label": "decoded samples",
+      "fromSide": "right",
+      "toSide": "top"
+    },
+    {
+      "id": "frame",
+      "from": "audio",
+      "to": "bg",
+      "label": "LED frame",
+      "variant": "dashed",
+      "labelAt": [
+        575,
+        390
+      ]
+    },
+    {
+      "id": "leds",
+      "from": "bg",
+      "to": "apc",
+      "label": "Note On colors",
+      "variant": "dashed"
+    }
+  ]
+}
